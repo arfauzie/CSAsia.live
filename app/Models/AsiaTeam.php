@@ -9,15 +9,17 @@ class AsiaTeam extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $table = 'asia_teams';
 
-    public function rosters()
-    {
-        return $this->hasMany(RosterMember::class);
-    }
-
-    public function statistics()
-    {
-        return $this->hasMany(TeamStatistic::class);
-    }
+    protected $fillable = [
+        'pandascore_team_id',
+        'name',
+        'slug',
+        'country',
+        'region',
+        'logo_url',
+        'total_prize_money',
+        'is_active',
+        'valve_ranking', // Tambahkan ini
+    ];
 }

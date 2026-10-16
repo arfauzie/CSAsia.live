@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('prize_distributions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tournament_id')->constrained('tournaments')->onDelete('cascade');
-            $table->string('placement'); // cth: "1st Place"
-            $table->string('amount'); // cth: "$50,000"
+            $table->foreignId('tournament_id')->constrained()->onDelete('cascade');
+            $table->string('placement');
+            $table->string('amount');
+            $table->string('team_name')->nullable(); // <-- Pastikan kolom ini ada
             $table->timestamps();
         });
     }
