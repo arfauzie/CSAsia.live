@@ -35,10 +35,8 @@
     <!-- Grid Kartu Tim -->
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         @forelse($teams as $team)
-            <a href="{{ route('teams.show', $team->slug) }}"
+            <a href="{{ route('teams.show', $team['slug'] ?? $team['id']) }}"
                 class="bg-[#161e2b] h-40 rounded-[5px] border border-slate-800 hover:border-slate-700 p-3.5 flex flex-col justify-between relative group cursor-pointer transition overflow-hidden shadow-md block">
-
-                <!-- Ikon Favorit -->
                 <div class="absolute top-2.5 right-2.5 text-slate-500 hover:text-amber-400 transition z-10"
                     @click.prevent="">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,7 +66,6 @@
                     <span
                         class="text-[9px] font-semibold text-slate-400 uppercase bg-[#212c3d] px-1.5 py-0.5 rounded-[3px]">{{ $team->location ?? 'Asia' }}</span>
                 </div>
-
             </a>
         @empty
             <div

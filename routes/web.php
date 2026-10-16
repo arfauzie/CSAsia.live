@@ -55,3 +55,6 @@ Route::get('/matches/{id}', function ($id) {
 Route::get('/run-sync-teams', function (TeamSyncService $service) {
     return $service->autoDiscoverAndSyncAsiaTeams();
 });
+
+// Detail Tim Asia menggunakan Controller untuk mengambil data Live API PandaScore
+Route::get('/teams/{slug}', [TeamController::class, 'show'])->name('teams.show');

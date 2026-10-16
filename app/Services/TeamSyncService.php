@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use App\Models\AsiaTeam;
+use Illuminate\Support\Facades\Log;
 
 class TeamSyncService
 {
@@ -18,132 +19,86 @@ class TeamSyncService
 
     public function autoDiscoverAndSyncAsiaTeams()
     {
-        // 1. Whitelist Nama Tim Resmi Valve Asia (Berdasarkan Ranking HLTV / Valve Regional Standings)
-        $valveAsiaTeamsWhitelist = [
-            'BC.GAME',
-            'TYLOO',
-            'THE MONGOLZ',
-            'CHINGGIS WARRIORS',
-            'FLYQUEST',
-            '5STAR',
-            'LYNN VISION',
-            'NEXVOID',
-            'DEPO',
-            'GROUND ZERO',
-            'THUNDER DOWNUNDER',
-            'THE HUNS',
-            'ABYSSAL',
-            'ALTER EGO',
-            'ROOSTER',
-            'RARE ATOM',
-            'KALEIDO',
-            'JUST SWING',
-            'KZG',
-            'VITALEM AEREM',
-            'MINDFREAK',
-            'THE UNIT',
-            'NAS',
-            '5DADS',
-            'REVENGE',
-            'MARKANDLARRY',
-            'HAUNTED HOUSE',
-            'LFO 8',
-            'XDM',
-            'EX-ARCADE',
-            'THE KNOCKOUTX',
-            'LFO 9',
-            'DING CUTS',
-            'BGNS ORANGE',
-            'MADLIKEWIZARDS',
-            'LEGION',
-            'SEMPERFI',
-            'BORING PLAYERS',
-            'FRUJU',
-            'FURY',
-            'BANZAI',
-            '1337',
-            'BLIGHT BLUE',
-            'QUANTUMX'
-        ];
-
-        // 2. Daftar Negara & Label Wilayah Spesifik Pilihanmu
-        $allowedLocations = [
-            'CN',
-            'MN',
-            'AU',
-            'KG',
-            'PK',
-            'UZ',
-            'KZ',
-            'CHINA',
-            'MONGOLIA',
-            'AUSTRALIA',
-            'KYRGYZSTAN',
-            'PAKISTAN',
-            'UZBEKISTAN',
-            'KAZAKHSTAN',
-            'ASIA',
-            'ASIA-PACIFIC'
+        // Whitelist ID PandaScore Resmi untuk Tim Inti/Utama Asia
+        // (Silakan terus tambahkan baris ID baru di sini setelah Anda mencarinya di browser)
+        $valveAsiaTeamsIds = [
+            3248   => 'TYLOO',
+            127114 => 'Rooster',
+            138151 => 'NEXVOID',
+            135177 => 'BC.Game',
+            3272 => 'The Mongolz',
+            134264 => 'Chinggis Warriors',
+            134746 => 'FlyQuest',
+            138284 => '5star',
+            126439 => 'Lynn Vision',
+            135915 => 'DEPO',
+            125873 => 'Ground Zero',
+            137594 => 'THUNDER dOWNUNDER',
+            133900 => 'The Huns Esports',
+            138092 => 'Abyssal',
+            135214 => 'Alter Ego',
+            130329 => 'Rare Atom',
+            137155 => 'Kaleido',
+            136330 => 'Just Swing',
+            133497 => 'KZG',
+            138702 => 'Vitalem Aerem',
+            131110 => 'Mindfreak',
+            138110 => 'THE UNIT',
+            135436 => 'Revenge',
+            127125 => 'MARKandLARRY',
+            138283 => 'Haunted House',
+            137121 => 'TEAM EDM',
+            139356 => 'BGNS Orange',
+            126269 => 'madlikewizards',
+            137344 => 'Legion',
+            135428 => 'SemperFi Esports',
+            135162 => 'Boring Players',
+            139287 => 'Fruju',
+            126278 => 'FURY',
+            138015 => 'Ding Cuts',
+            136767 => 'Banzai',
+            139357 => '1337',
+            139281 => 'bLight blue',
+            139128 => 'QuantumX'
         ];
 
         $syncedCount = 0;
-        $page = 1;
-        $perPage = 100;
 
-        do {
+        foreach ($valveAsiaTeamsIds as $pandascoreId => $teamName) {
+
+            // Tembak API secara spesifik langsung menggunakan ID unik tim ke PandaScore
             $response = Http::withToken($this->apiKey)
-                ->get($this->baseUrl, [
-                    'page' => $page,
-                    'per_page' => $perPage,
-                ]);
+                ->get("https://api.pandascore.co/teams/{$pandascoreId}");
 
+            // Jika gagal terhubung atau ID tidak ditemukan di API, catat log dan lewati ke tim berikutnya
             if ($response->failed()) {
-                break;
+                Log::error("Gagal menarik data dari PandaScore untuk ID Tim: {$pandascoreId} ({$teamName})");
+                continue;
             }
 
-            $teams = $response->json();
-            if (empty($teams)) {
-                break;
+            $teamData = $response->json();
+
+            if (!empty($teamData)) {
+                // Simpan atau perbarui data ke database internal Anda
+                // Menggunakan pandascore_team_id sebagai kunci utama agar data 100% unik
+                AsiaTeam::updateOrCreate(
+                    ['pandascore_team_id' => $teamData['id']],
+                    [
+                        'name' => $teamData['name'], // Mengambil nama murni dari API PandaScore
+                        'slug' => $teamData['slug'] ?? Str::slug($teamData['name']),
+                        'country' => $teamData['location'] ?? 'Asia',
+                        'logo_url' => $teamData['image_url'] ?? 'https://placehold.co', // Fallback jika logo kosong
+                        'is_active' => true,
+                    ]
+                );
+
+                $syncedCount++;
             }
 
-            foreach ($teams as $teamData) {
-                $teamNameUpper = strtoupper(trim($teamData['name'] ?? ''));
-                $location = strtoupper(trim($teamData['location'] ?? ''));
-                $isActive = $teamData['active'] ?? true;
+            // Jeda 0.2 detik (200.000 mikrodetik) per tim agar aman dari limit pemblokiran API PandaScore
+            usleep(200000);
+        }
 
-                // Logika Dua Lapis:
-                // Lapis A: Apakah nama tim ada di whitelist resmi Valve Asia?
-                $isWhitelistMatch = in_array($teamNameUpper, $valveAsiaTeamsWhitelist);
-
-                // Lapis B: Apakah lokasi negara/region sesuai dengan whitelist spesifikmu?
-                $isLocationMatch = false;
-                foreach ($allowedLocations as $allowed) {
-                    if ($location !== '' && str_contains($location, $allowed)) {
-                        $isLocationMatch = true;
-                        break;
-                    }
-                }
-
-                // Jika memenuhi salah satu syarat DAN tim tersebut aktif
-                if (($isWhitelistMatch || $isLocationMatch) && $isActive == true) {
-                    AsiaTeam::updateOrCreate(
-                        ['name' => $teamData['name']],
-                        [
-                            'pandascore_team_id' => $teamData['id'],
-                            'slug' => $teamData['slug'] ?? Str::slug($teamData['name']),
-                            'country' => $teamData['location'] ?? 'Asia',
-                            'logo_url' => $teamData['image_url'],
-                            'is_active' => true,
-                        ]
-                    );
-
-                    $syncedCount++;
-                }
-            }
-
-            $page++;
-        } while (count($teams) == $perPage && $page <= 15);
-
-        return "Berhasil menyinkronkan {$syncedCount} tim resmi Valve Asia & PandaScore!";
+        return "Berhasil menyinkronkan {$syncedCount} tim inti teratas Asia langsung berdasarkan ID resmi!";
     }
 }
