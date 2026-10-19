@@ -15,24 +15,48 @@
     </div>
 
     <!-- HEADER TURNAMEN (Wadah Level 2) -->
-    <div class="bg-[#161e2b] rounded-[5px] border border-slate-800 p-5 flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-5 shadow-xl">
+    <div class="p-6 flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
         <!-- Banner / Logo Turnamen -->
-        <div class="w-20 h-20 bg-[#212c3d] rounded-[4px] border border-slate-700/50 p-2 flex items-center justify-center flex-shrink-0">
-            <img src="{{ $tournament->image_url ?? 'https://via.placeholder.com/80?text=CS2' }}" class="max-h-full max-w-full object-contain" alt="">
+        <div class="w-36 h-36 bg-black rounded-lg p-3 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-lg border border-slate-800/50">
+            <img src="{{ $tournament->image_url ?? 'https://placeholder.com' }}" class="w-full h-full object-contain" alt="{{ $tournament->name }}">
         </div>
 
-        <!-- Info Turnamen -->
-        <div class="flex-1 space-y-1.5">
-            <div class="flex items-center space-x-2">
-                <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-[3px] bg-blue-950 text-blue-400 border border-blue-800/60 uppercase">{{ $tournament->tier }}-TIER</span>
-                <span class="text-[10px] text-slate-400">• {{ $tournament->start_date ? \Carbon\Carbon::parse($tournament->start_date)->format('M d') : 'TBA' }} - {{ $tournament->end_date ? \Carbon\Carbon::parse($tournament->end_date)->format('M d, Y') : 'TBA' }}</span>
-                <span class="text-[10px] text-slate-400">• ${{ number_format($tournament->prize_pool, 0, ',', '.') }}</span>
-                <span class="text-[10px] text-slate-400">• {{ $tournament->asia_team_count }} Tim Asia</span>
+    
+        <div class="flex-1 space-y-2.5 pt-1 text-left">
+            <!-- Judul Turnamen -->
+            <h1 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight leading-none">
+                {{ $tournament->name }}
+            </h1>
+
+        <!-- Info Meta Turnamen -->
+            <div class="flex flex-wrap items-center text-sm md:text-base text-slate-200 font-medium">
+                <span>
+                    @if($tournament->start_date && $tournament->end_date)
+                        {{ \Carbon\Carbon::parse($tournament->start_date)->format('M d') }} - {{ \Carbon\Carbon::parse($tournament->end_date)->format('d') }}
+                    @else
+                        TBA
+                    @endif
+                </span>
+
+                <span class="mx-2 text-slate-400">•</span>
+                <span>${{ number_format($tournament->prize_pool, 0, '.', ',') }}</span>
+
+                <span class="mx-2 text-slate-400">•</span>
+                <span>{{ $tournament->asia_team_count ?? 8 }} teams</span>
+
+                @if(!empty($tournament->location))
+                    <span class="mx-2 text-slate-400">•</span>
+                    <span>{{ $tournament->location }}</span>
+                @endif
             </div>
-            <h1 class="text-xl font-black text-white uppercase tracking-wider">{{ $tournament->name }}</h1>
-            <p class="text-xs text-slate-400 line-clamp-2">Turnamen CS2 Tier {{ $tournament->tier }} resmi melacak tim-tim Asia unggulan untuk memperebutkan total hadiah ${{ number_format($tournament->prize_pool, 0, ',', '.') }}.</p>
+
+        <!-- Deskripsi Turnamen -->
+            <p class="text-sm md:text-[15px] text-slate-300 font-normal leading-relaxed max-w-5xl">
+                {{ $tournament->description ?? 'The ' . $tournament->name . ' takes place in the ' . ($tournament->location ?? 'BLAST Studios in Malta') . '. ' . ($tournament->asia_team_count ?? 8) . ' teams will battle it out for a $' . number_format($tournament->prize_pool, 0, '.', ',') . ' prizepool.' }}
+            </p>
         </div>
     </div>
+
 
     <!-- TAB NAVIGATION (Overview & Results) -->
     <div class="flex border-b border-slate-800 space-x-6 text-xs font-bold pt-1">
@@ -72,15 +96,15 @@
                                     {{ $match->score_a ?? 0 }} - {{ $match->score_b ?? 0 }}
                                 </a>
                             @else
-                                <span class="bg-[#161e2b] px-3 py-1 rounded-[3px] font-mono text-slate-500 border border-slate-800 opacity-60 cursor-not-allowed">
-                                    {{ $match->score_a ?? 0 }} - {{ $match->score_b ?? 0 }}
+                                <span class="px-3 py-1 bg-[#161e2b] rounded-[3px] font-mono font-bold text-xs text-emerald-400 border border-slate-700/50">
+                                {{ $match->score_a ?? 0 }} - {{ $match->score_b ?? 0 }}
                                 </span>
                             @endif
                         </div>
                     @endforeach
                 </div>
             </div>
-        @endif
+        @endif  
 
         <!-- SECTION 2: BRACKETS ACCORDION BUKA-TUTUP -->
         <div class="bg-[#161e2b] rounded-[5px] border border-slate-800 p-4 space-y-3">

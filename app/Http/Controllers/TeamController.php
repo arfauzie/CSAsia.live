@@ -18,11 +18,13 @@ class TeamController extends Controller
     }
 
     public function show($slug)
-    { {
-            $team = AsiaTeam::where('slug', $slug)->with('tournaments')->firstOrFail();
+    {
 
-            return view('teams.show', compact('team'));
-        }
+        // 1. Cari data tim dasar dari database lokal
+        $teamModel = AsiaTeam::where('slug', $slug)->firstOrFail();
+
+        // 2. Ambil API Key PandaScore dari environment
+        $apiKey = env('PANDASCORE_API_KEY');
 
         // 3. Tembak API PandaScore untuk mendapatkan roster terbaru
         $response = Http::withToken($apiKey)

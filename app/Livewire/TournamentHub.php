@@ -10,10 +10,12 @@ class TournamentHub extends Component
 {
     public $statusFilter = 'all';
 
+    protected $queryString = ['statusFilter'];
+
     public function mount(TournamentSyncService $tournamentSync)
     {
-        // Panggil sinkronisasi khusus turnamen Alter Ego (ID: 135214)
-        $tournamentSync->syncTournamentsForAlterEgo();
+        // Panggil method yang benar sesuai service kita: syncTournaments()
+        $tournamentSync->syncTournaments();
     }
 
     public function render()
@@ -24,12 +26,12 @@ class TournamentHub extends Component
             $query->where('status', 'ongoing');
         } elseif ($this->statusFilter === 'upcoming') {
             $query->where('status', 'upcoming');
+        } else {
+            $query->where('status', '!=', 'finished');
         }
 
         $tournaments = $query->orderBy('start_date', 'asc')->get();
 
-        return view('components.tournament-hub', [
-            'tournaments' => $tournaments
-        ]);
+        return view('components.tournament-hub', compact('tournaments'));
     }
 }

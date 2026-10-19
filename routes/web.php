@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\Tournament;
 use App\Models\MatchModel;
-use App\Models\AsiaTeam;
 use App\Services\TeamSyncService;
 use App\Http\Controllers\TeamController;
 
@@ -32,15 +31,10 @@ Route::get('/tournaments/{slug}', function ($slug) {
 // Teams (Daftar Tim Asia menggunakan Controller)
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
 
-// Detail Tim Asia
-Route::get('/teams/{slug}', function ($slug) {
-    $team = AsiaTeam::with(['rosters'])
-        ->where('slug', $slug)
-        ->firstOrFail();
-    return view('teams.show', compact('team'));
-})->name('teams.show');
+// Detail Tim Asia (Menggunakan Controller - duplikasi dihapus)
+Route::get('/teams/{slug}', [TeamController::class, 'show'])->name('teams.show');
 
-// Detail Match
+// Detail Match (Dengan proteksi Strict Asia Filter sesuai dokumen MVP)
 Route::get('/matches/{id}', function ($id) {
     $match = MatchModel::with('tournament')->where('id', $id)->firstOrFail();
 
@@ -55,6 +49,3 @@ Route::get('/matches/{id}', function ($id) {
 Route::get('/run-sync-teams', function (TeamSyncService $service) {
     return $service->autoDiscoverAndSyncAsiaTeams();
 });
-
-// Detail Tim Asia menggunakan Controller untuk mengambil data Live API PandaScore
-Route::get('/teams/{slug}', [TeamController::class, 'show'])->name('teams.show');

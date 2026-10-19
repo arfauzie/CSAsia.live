@@ -14,21 +14,20 @@
             <span class="text-slate-200">{{ $team->name }}</span>
         </div>
 
-        <!-- HEADER PROFIL TIM (Wadah Level 2) -->
         <!-- HEADER TIM & METADATA -->
         <div class="space-y-4 mb-6">
 
             <!-- Bagian Logo & Nama Tim Utama -->
             <div class="flex items-center space-x-4">
                 <!-- Logo Tim -->
-                <div class="w-16 h-16 bg-[#161e2b] rounded-[5px]  p-2 flex items-center justify-center flex-shrink-0">
+                <div class="w-20 h-20  rounded-[5px]  p-2 flex items-center justify-center flex-shrink-0">
                     <img src="{{ $team->logo_url ?? 'https://via.placeholder.com/80?text=TEAM' }}"
                         class="max-h-full max-w-full object-contain" alt="{{ $team->name }}">
                 </div>
 
                 <!-- Nama & Alias Tim -->
                 <div class="space-y-0.5">
-                    <h1 class="text-xl font-black text-white tracking-wide">{{ $team->name }}</h1>
+                    <h1 class="text-xl font-bold text-white tracking-wide">{{ $team->name }}</h1>
                     <p class="text-xs text-slate-400">
                         {{ $team->name }}{{ isset($team->acronym) ? ', ' . $team->acronym : '' }}
                     </p>
@@ -36,11 +35,11 @@
             </div>
 
             <!-- Kotak Informasi Detail (Negara, Wilayah, Total Hadiah) -->
-            <div class="bg-[#161e2b] rounded-[5px]  p-4 text-xs space-y-3">
+            <div class="bg-[#22262c] rounded-[5px]  p-4 text-xs space-y-3">
 
                 <!-- Negara -->
-                <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
-                    <span class="text-slate-400">Negara</span>
+                <div class="flex justify-between items-center py-1 ">
+                    <span class="border-slate-200">Negara</span>
                     <div class="flex items-center space-x-2">
                         <!-- Jika Anda punya helper bendera atau gambar bendera, bisa disesuaikan -->
                         <span class="font-bold text-white">{{ $team->country ?? 'Indonesia' }}</span>
@@ -48,7 +47,7 @@
                 </div>
 
                 <!-- Wilayah -->
-                <div class="flex justify-between items-center py-1 border-b border-slate-800/60">
+                <div class="flex justify-between items-center py-1 ">
                     <span class="text-slate-400">Wilayah</span>
                     <span class="font-bold text-white">{{ $team->region ?? 'Asia' }}</span>
                 </div>
@@ -66,7 +65,7 @@
         </div>
 
         <!-- NAVIGASI TAB (Ikhtisar, Skuad, Pertandingan, Turnamen, Statistik) -->
-        <div class="bg-[#161e2b] rounded-[10px]  px-10 pt-3 mb-6">
+        <div class="bg-[#22262c] rounded-[10px]  px-4 pt-3 mb-6">
             <div class="flex space-x-30 text-xs ">
                 <button @click="activeTab = 'overview'"
                     :class="activeTab === 'overview' ? 'border-b-3 border-blue-500 text-white -mb-[1px] pb-3' : 'text-slate-400 hover:text-slate-200 -mb-[1px] pb-3'">
@@ -95,8 +94,8 @@
         <div x-show="activeTab === 'overview'" class="grid grid-cols-1 md:grid-cols-3 gap-5">
 
             <!-- KOLOM KIRI: ROSTER & PELATIH (span 2 kolom) -->
-            <div class="md:col-span-2 bg-[#161e2b] p-4 rounded-[5px]  space-y-4">
-                <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800/80 pb-2">
+            <div class="md:col-span-2 bg-[#22262c] p-4 rounded-[5px]  space-y-4">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider  pb-2">
                     ROSTER
                 </h3>
 
@@ -104,11 +103,11 @@
                 <div class="grid grid-cols-5 gap-2.5">
                     @forelse($team->rosters->where('role', 'player')->take(5) as $player)
                         <div
-                            class="bg-[#243044] rounded-[4px] border border-slate-700/60 overflow-hidden flex flex-col items-center text-center group">
+                            class="bg-[#313840] rounded-[4px] border border-slate-700/60 overflow-hidden flex flex-col items-center text-center group">
 
                             <!-- Foto Pemain (Tanpa Bendera di Foto) -->
                             <div
-                                class="w-full h-32 bg-[#161e2b] overflow-hidden relative flex items-center justify-center border-b border-slate-700/40">
+                                class="w-full h-32 bg-[#22262c] overflow-hidden relative flex items-center justify-center border-b border-slate-700/40">
                                 @if(!empty($player->photo_url))
                                     <img src="{{ str_starts_with($player->photo_url, 'http') ? $player->photo_url : asset($player->photo_url) }}"
                                         alt="{{ $player->nickname }}"
@@ -141,7 +140,7 @@
 
                                 <!-- Label Status -->
                                 <span
-                                    class="px-1.5 py-0.5 text-[8px] font-bold bg-[#161e2b] text-emerald-400 rounded uppercase tracking-wider border border-slate-700/50">
+                                    class="px-1.5 py-0.5 text-[8px] font-bold bg-[#22262c] text-emerald-400 rounded uppercase tracking-wider border border-slate-700/50">
                                     PEMAIN INTI
                                 </span>
                             </div>
@@ -158,10 +157,10 @@
                 @endphp
 
                 @if($coach)
-                    <div class="bg-[#212c3d] p-2.5 rounded-[4px] border border-slate-700/40 flex items-center justify-between">
+                    <div class="bg-[#313840] p-2.5 rounded-[4px]  flex items-center justify-between">
                         <div class="flex items-center space-x-3">
                             <div
-                                class="w-10 h-10 rounded-full bg-[#161e2b] border border-slate-700 overflow-hidden flex items-center justify-center">
+                                class="w-10 h-10 rounded-full bg-[#22262c] border border-slate-700 overflow-hidden flex items-center justify-center">
                                 @if(!empty($coach->photo_url))
                                     <img src="{{ $coach->photo_url }}" alt="{{ $coach->nickname }}"
                                         class="w-full h-full object-cover">
@@ -183,22 +182,22 @@
 
                 <!-- Tombol Semua Skuad -->
                 <button @click="activeTab = 'squad'"
-                    class="w-full py-2.5 bg-[#212c3d] hover:bg-[#283548] text-slate-300 hover:text-white text-xs font-bold rounded-[4px] border border-slate-700/60 transition uppercase tracking-wider">
+                    class="w-full py-2.5 bg-[#313840] hover:bg-[#283548] text-slate-300 hover:text-white text-xs font-bold rounded-[4px] transition uppercase tracking-wider">
                     SEMUA SKUAD
                 </button>
             </div>
 
             <!-- KOLOM KANAN: PERTANDINGAN TERAKHIR (Recent Matches) -->
-            <div class="bg-[#161e2b] p-4 rounded-[5px]  space-y-3">
-                <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800/80 pb-2">
+            <div class="bg-[#22262c] p-4 rounded-[5px]  space-y-3">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider  pb-2">
                     PERTANDINGAN TERBARU
                 </h3>
 
                 <div class="space-y-2.5 text-xs">
                     @forelse($team->matches ?? [] as $match)
                         <!-- Card Pertandingan -->
-                        <div class="bg-[#212c3d] p-3 rounded-[4px] border border-slate-700/40 space-y-2">
-                            <div class="text-[10px] text-slate-400 truncate">
+                        <div class="bg-[#313840] p-3 rounded-[4px]  space-y-2">
+                            <div class="text-[10px]  truncate">
                                 {{ $match->tournament_name ?? 'Turnamen CS2' }}
                             </div>
                             <div class="flex justify-between items-center">
@@ -225,8 +224,7 @@
                         </div>
                     @empty
                         <!-- Fallback jika belum ada data match -->
-                        <div
-                            class="bg-[#212c3d] p-3 rounded-[4px] border border-slate-700/40 text-center py-4 text-slate-400 text-xs">
+                        <div class="bg-[#313840] p-3 rounded-[4px]  text-center py-4 text-slate-400 text-xs">
                             Belum ada riwayat pertandingan terbaru.
                         </div>
                     @endforelse
@@ -237,19 +235,19 @@
 
         <!-- TAB 2: SKUAD -->
         <div x-show="activeTab === 'squad'" class="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div class="md:col-span-3 bg-[#161e2b] p-5 rounded-[5px] border border-slate-800 space-y-4">
-                <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800/80 pb-2">
+            <div class="md:col-span-3 bg-[#22262c] p-5 rounded-[5px]  space-y-4">
+                <h3 class="text-xs font-bold text-white uppercase tracking-wider  pb-2">
                     SKUAD PEMAIN & PELATIH
                 </h3>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
                     @forelse($team->rosters as $player)
                         <div
-                            class="bg-[#243044] rounded-[4px] border border-slate-700/60 overflow-hidden flex flex-col items-center text-center group p-3 space-y-2">
+                            class="bg-[#313840] rounded-[4px] border border-slate-700/60 overflow-hidden flex flex-col items-center text-center group p-3 space-y-2">
 
                             <!-- Foto Pemain -->
                             <div
-                                class="w-16 h-16 rounded-full bg-[#161e2b] border border-slate-700 overflow-hidden flex items-center justify-center">
+                                class="w-16 h-16 rounded-full bg-[#22262c] border border-slate-700 overflow-hidden flex items-center justify-center">
                                 @if(!empty($player->photo_url))
                                     <img src="{{ str_starts_with($player->photo_url, 'http') ? $player->photo_url : asset($player->photo_url) }}"
                                         alt="{{ $player->nickname }}" class="w-full h-full object-cover">
@@ -289,7 +287,7 @@
                                     $badgeClass = 'bg-purple-500/10 text-purple-400 border-purple-500/20';
                                 } else {
                                     $badgeText = 'PEMAIN INTI';
-                                    $badgeClass = 'bg-[#161e2b] text-emerald-400 border-slate-700/50';
+                                    $badgeClass = 'bg-[#22262c] text-emerald-400 border-slate-700/50';
                                 }
                             @endphp
 
@@ -307,8 +305,8 @@
         </div>
 
         <!-- TAB 3: PERTANDINGAN (MATCHES) -->
-        <div x-show="activeTab === 'matches'" class="bg-[#161e2b] p-4 rounded-[5px]  space-y-3">
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800/80 pb-2">HASIL &
+        <div x-show="activeTab === 'matches'" class="bg-[#22262c] p-4 rounded-[5px]  space-y-3">
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider  pb-2">HASIL &
                 JADWAL PERTANDINGAN</h3>
             @php
                 $teamMatches = \App\Models\MatchModel::where('team_a_name', $team->name)
@@ -320,7 +318,7 @@
             <div class="space-y-1.5">
                 @forelse($teamMatches as $m)
                     <a href="{{ route('matches.show', $m->id) }}"
-                        class="bg-[#212c3d] hover:bg-[#283548] p-3 rounded-[4px] border border-slate-700/40 flex items-center justify-between transition block text-xs">
+                        class="bg-[#313840] hover:bg-[#283548] p-3 rounded-[4px]  flex items-center justify-between transition block text-xs">
                         <span class="text-slate-400 w-32 truncate font-medium">{{ $m->round_label ?? 'Match' }}</span>
 
                         <div class="flex-1 grid grid-cols-2 gap-3 items-center px-4">
@@ -335,7 +333,7 @@
                         </div>
 
                         <div
-                            class="px-3 py-1 bg-[#161e2b] rounded-[3px] font-mono font-bold text-xs text-emerald-400 border border-slate-700/50">
+                            class="px-3 py-1 bg-[#22262c] rounded-[3px] font-mono font-bold text-xs text-emerald-400 border border-slate-700/50">
                             {{ $m->score_a ?? 0 }} - {{ $m->score_b ?? 0 }}
                         </div>
                     </a>
@@ -346,8 +344,8 @@
         </div>
 
         <!-- TAB 4: TURNAMEN (GAMBAR 4, 5, 6 - PRIORITY ONGOING & UPCOMING DI ATAS) -->
-        <div x-show="activeTab === 'tournaments'" class="bg-[#161e2b] p-4 rounded-[5px]  space-y-4">
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800/80 pb-2">TURNAMEN
+        <div x-show="activeTab === 'tournaments'" class="bg-[#22262c] p-4 rounded-[5px]  space-y-4">
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider  pb-2">TURNAMEN
                 YANG DIIKUTI</h3>
 
             @php
@@ -360,10 +358,10 @@
             <div class="space-y-2">
                 @forelse($teamTournaments as $tour)
                     <a href="{{ route('tournaments.show', $tour->slug) }}"
-                        class="bg-[#212c3d] hover:bg-[#283548] p-3 rounded-[4px] border border-slate-700/40 flex items-center justify-between transition group block">
+                        class="bg-[#313840] hover:bg-[#283548] p-3 rounded-[4px]  flex items-center justify-between transition group block">
                         <div class="flex items-center space-x-3">
                             <div
-                                class="w-7 h-7 bg-[#161e2b] rounded-[3px] p-1 flex items-center justify-center border border-slate-700/50">
+                                class="w-7 h-7 bg-[#22262c] rounded-[3px] p-1 flex items-center justify-center border border-slate-700/50">
                                 <img src="{{ $tour->image_url ?? 'https://via.placeholder.com/30?text=CS' }}"
                                     class="max-h-full max-w-full object-contain">
                             </div>
@@ -393,30 +391,30 @@
         </div>
 
         <!-- TAB 5: STATISTIK SIMPEL -->
-        <div x-show="activeTab === 'stats'" class="bg-[#161e2b] p-4 rounded-[5px]  space-y-4">
-            <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800/80 pb-2">STATISTIK
+        <div x-show="activeTab === 'stats'" class="bg-[#22262c] p-4 rounded-[5px]  space-y-4">
+            <h3 class="text-xs font-bold text-white uppercase tracking-wider  pb-2">STATISTIK
                 UMUM TIM</h3>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="bg-[#212c3d] p-3.5 rounded-[4px] border border-slate-700/40 space-y-1">
+                <div class="bg-[#313840] p-3.5 rounded-[4px]  space-y-1">
                     <span class="text-[10px] text-slate-400 font-bold uppercase">Turnamen</span>
                     <div class="text-lg font-bold font-mono text-white">12</div>
                     <span class="text-[10px] text-emerald-400 block">Rasio Menang: 25%</span>
                 </div>
 
-                <div class="bg-[#212c3d] p-3.5 rounded-[4px] border border-slate-700/40 space-y-1">
+                <div class="bg-[#313840] p-3.5 rounded-[4px]  space-y-1">
                     <span class="text-[10px] text-slate-400 font-bold uppercase">Pertandingan</span>
                     <div class="text-lg font-bold font-mono text-white">44</div>
                     <span class="text-[10px] text-emerald-400 block">Rasio Menang: 55%</span>
                 </div>
 
-                <div class="bg-[#212c3d] p-3.5 rounded-[4px] border border-slate-700/40 space-y-1">
+                <div class="bg-[#313840] p-3.5 rounded-[4px]  space-y-1">
                     <span class="text-[10px] text-slate-400 font-bold uppercase">Peta</span>
                     <div class="text-lg font-bold font-mono text-white">88</div>
                     <span class="text-[10px] text-emerald-400 block">Rasio Menang: 56%</span>
                 </div>
 
-                <div class="bg-[#212c3d] p-3.5 rounded-[4px] border border-slate-700/40 space-y-1">
+                <div class="bg-[#313840] p-3.5 rounded-[4px]  space-y-1">
                     <span class="text-[10px] text-slate-400 font-bold uppercase">Ronde</span>
                     <div class="text-lg font-bold font-mono text-white">1,776</div>
                     <span class="text-[10px] text-emerald-400 block">Rasio Menang: 54%</span>

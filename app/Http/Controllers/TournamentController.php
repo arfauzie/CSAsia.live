@@ -8,18 +8,30 @@ use App\Services\TournamentSyncService;
 
 class TournamentHub extends Component
 {
+    public $statusFilter = 'all';
+
+    protected $queryString = ['statusFilter'];
+
     public function mount(TournamentSyncService $tournamentSync)
     {
-        // 1. Jalankan sync turnamen Alter Ego saat komponen dimuat (atau bisa dipindah ke cron/command nanti)
-        // Ganti 1234 dengan ID PandaScore Alter Ego yang sebenarnya
-        $tournamentSync->syncTournamentsForAlterEgo(135214);
+        // Diubah dari syncTournamentsForAlterEgo() menjadi syncTournaments()
+        $tournamentSync->syncTournaments();
     }
 
     public function render()
     {
-        // 2. Ambil data dari database lokal untuk dilempar ke view Livewire
-        $tournaments = Tournament::where('status', '!=', 'finished')->get();
+        $query = Tournament::query();
 
-        return view('livewire.tournament-hub', compact('tournaments'));
+        if ($this->statusFilter === 'ongoing') {
+            $query->where('status', 'ongoing');
+        } elseif ($this->statusFilter === 'upcoming') {
+            $query->where('status', 'upcoming');
+        } else {
+            $query->where('status', '!=', 'finished');
+        }
+
+        $tournaments = $query->orderBy('start_date', 'asc')->get();
+
+        return view('components.tournament-hub', compact('tournaments'));
     }
 }
